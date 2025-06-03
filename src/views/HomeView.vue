@@ -4,16 +4,56 @@ import TheWelcome from '../components/TheWelcome.vue';
 import * as echarts from 'echarts';
 import china from '../assets/china.json';
 
+let count = 0;
 
 onMounted(() => {
   console.log(`the component is now mounted.`);
+  window.vm = this;
+  const dataList = [
+    {name: '北京市',value: Math.round(Math.random()*1000)},
+    {name: '天津市',value: Math.round(Math.random()*1000)},
+    {name: '上海市',value: Math.round(Math.random()*1000)},
+    {name: '重庆市',value: Math.round(Math.random()*1000)},
+    {name: '河北省',value: Math.round(Math.random()*1000)},
+    {name: '河南省',value: Math.round(Math.random()*1000)},
+    {name: '云南省',value: Math.round(Math.random()*1000)},
+    {name: '辽宁省',value: Math.round(Math.random()*1000)},
+    {name: '黑龙江省',value: Math.round(Math.random()*1000000)},
+    {name: '湖南省',value: Math.round(Math.random()*1000)},
+    {name: '安徽省',value: Math.round(Math.random()*1000)},
+    {name: '山东省',value: Math.round(Math.random()*1000)},
+    {name: '新疆',value: Math.round(Math.random()*1000)},
+    {name: '江苏省',value: Math.round(Math.random()*1000)},
+    {name: '浙江省',value: Math.round(Math.random()*1000)},
+    {name: '江西省',value: Math.round(Math.random()*1000)},
+    {name: '湖北省',value: Math.round(Math.random()*1000)},
+    {name: '广西',value: Math.round(Math.random()*1000)},
+    {name: '甘肃省',value: Math.round(Math.random()*1000)},
+    {name: '山西省',value: Math.round(Math.random()*1000)},
+    {name: '内蒙古',value: Math.round(Math.random()*1000)},
+    {name: '陕西省',value: Math.round(Math.random()*1000)},
+    {name: '吉林省',value: Math.round(Math.random()*1000)},
+    {name: '福建省',value: Math.round(Math.random()*1000)},
+    {name: '贵州省',value: Math.round(Math.random()*1000)},
+    {name: '广东省',value: Math.round(Math.random()*1000)},
+    {name: '青海省',value: Math.round(Math.random()*1000)},
+    {name: '西藏',value: Math.round(Math.random()*1000)},
+    {name: '四川省',value: Math.round(Math.random()*1000)},
+    {name: '宁夏',value: Math.round(Math.random()*1000)},
+    {name: '海南省',value: Math.round(Math.random()*1000)},
+    {name: '台湾省',value: Math.round(Math.random()*1000)},
+    {name: '香港',value: Math.round(Math.random()*1000)},
+    {name: '澳门',value: Math.round(Math.random()*1000)}
+  ];
+  
+  
   const instance = echarts.init(document.getElementById('chartsDOM'))
   echarts.registerMap('china', china);
   const options = {
     tooltip: {
       trigger: 'item',
       valueFormatter: (...rest) => {
-        console.log('rest ~ ', rest);
+        // console.log('rest ~ ', rest);
         return rest;
       }
     },
@@ -62,46 +102,28 @@ onMounted(() => {
             show: false
           }
         },
-        data: [
-          {name: '北京市',value: Math.round(Math.random()*1000)},
-          {name: '天津市',value: Math.round(Math.random()*1000)},
-          {name: '上海市',value: Math.round(Math.random()*1000)},
-          {name: '重庆市',value: Math.round(Math.random()*1000)},
-          {name: '河北省',value: Math.round(Math.random()*1000)},
-          {name: '河南省',value: Math.round(Math.random()*1000)},
-          {name: '云南省',value: Math.round(Math.random()*1000)},
-          {name: '辽宁省',value: Math.round(Math.random()*1000)},
-          {name: '黑龙江省',value: Math.round(Math.random()*1000000)},
-          {name: '湖南省',value: Math.round(Math.random()*1000)},
-          {name: '安徽省',value: Math.round(Math.random()*1000)},
-          {name: '山东省',value: Math.round(Math.random()*1000)},
-          {name: '新疆',value: Math.round(Math.random()*1000)},
-          {name: '江苏省',value: Math.round(Math.random()*1000)},
-          {name: '浙江省',value: Math.round(Math.random()*1000)},
-          {name: '江西省',value: Math.round(Math.random()*1000)},
-          {name: '湖北省',value: Math.round(Math.random()*1000)},
-          {name: '广西',value: Math.round(Math.random()*1000)},
-          {name: '甘肃省',value: Math.round(Math.random()*1000)},
-          {name: '山西省',value: Math.round(Math.random()*1000)},
-          {name: '内蒙古',value: Math.round(Math.random()*1000)},
-          {name: '陕西省',value: Math.round(Math.random()*1000)},
-          {name: '吉林省',value: Math.round(Math.random()*1000)},
-          {name: '福建省',value: Math.round(Math.random()*1000)},
-          {name: '贵州省',value: Math.round(Math.random()*1000)},
-          {name: '广东省',value: Math.round(Math.random()*1000)},
-          {name: '青海省',value: Math.round(Math.random()*1000)},
-          {name: '西藏',value: Math.round(Math.random()*1000)},
-          {name: '四川省',value: Math.round(Math.random()*1000)},
-          {name: '宁夏',value: Math.round(Math.random()*1000)},
-          {name: '海南省',value: Math.round(Math.random()*1000)},
-          {name: '台湾省',value: Math.round(Math.random()*1000)},
-          {name: '香港',value: Math.round(Math.random()*1000)},
-          {name: '澳门',value: Math.round(Math.random()*1000)}
-        ]
+        data: [],
       }
     ]
   }
   instance.setOption(options);
+  
+  const total =  dataList.length;
+  
+  let setId = setInterval(() => {
+    count = count + 1;
+    console.log('set ~ ', `${count}/${total}`, setId);
+    instance.setOption({
+      series: [{
+        data: dataList.slice(0, count)
+      }]
+    });
+
+    if (count >= total) {
+      console.log('clear ~ ', setId);
+      clearInterval(setId);
+    }
+  }, 1500);
 });
 
 </script>
