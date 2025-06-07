@@ -1,30 +1,18 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import {createHtmlPlugin} from 'vite-plugin-html'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-const filePath = fileURLToPath(new URL('./src/modules/water/index.html', import.meta.url));
-console.log('xxx ~ ', filePath, import.meta.url)
+const PROJECT_NAME = process.env.PROJECT_NAME;
 
-const htmlParams = {
-  minify: true,
-  pages: [
-    {
-      filename: 'index',     // filename 默认是template文件名，就是index.html
-      entry: './main.js',
-      template: './index.html',
-    }
-  ]
-}
+console.log('working with ~ ', PROJECT_NAME, import.meta.url)
 
 // https://vite.dev/config/
 export default defineConfig({
-  root: `./src/modules/water/`,
+  root: `./src/modules/${PROJECT_NAME}/`,
   plugins: [
     vue(),
-    // createHtmlPlugin(htmlParams),
     vueJsx(),
     vueDevTools(),
   ],
@@ -34,10 +22,11 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../../../dist',
+    outDir: fileURLToPath(new URL(`./dist_${PROJECT_NAME}`, import.meta.url)),
+    emptyOutDir: true,
     rollupOptions: {
       input: {
-        water: filePath,
+        [PROJECT_NAME]: fileURLToPath(new URL(`./src/modules/${PROJECT_NAME}/index.html`, import.meta.url)),
       },
       output: {
         entryFileNames: 'assets/[name].js',
