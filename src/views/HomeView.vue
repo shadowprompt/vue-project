@@ -47,8 +47,32 @@ const total =  dataList.length;
 let instance = ref(null);
 let instance2 = ref(null);
 
+let scale = ref(1);
+
 
 function init() {
+  // 比例尺
+  const width = 40;
+  const height = 10;
+  const left = 350;
+  const top = 70;
+  
+  var MyShape = echarts.graphic.extendShape({
+    shape: {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    },
+    buildPath: function(ctx, shape) {
+      ctx.moveTo(shape.x, shape.y);
+      ctx.lineTo(shape.x + shape.width, shape.y);
+      ctx.lineTo(shape.x + shape.width, shape.y + shape.height);
+      ctx.lineTo(shape.x, shape.y + shape.height);
+      ctx.closePath();
+    }
+  });
+  echarts.graphic.registerShape('myCustomShape', MyShape);
   echarts.registerMap('china', china);
   
   instance.value = echarts.init(document.getElementById('chartsDOM'))
@@ -91,8 +115,97 @@ function init() {
       y: 'center',
       color: ['#5a7097', '#7be7db', '#b4f0d2', '#e0fafb']
     },
+    graphic: [
+    // 比例尺文字
+      {
+        type: 'text', // 类型
+        left: left - 5, // 位置
+        top: top + height + 5,
+        style: {
+          text: '0',
+          font: '16px Microsoft YaHei',
+          fill: '#333' // 颜色
+        }
+      },
+      {
+        type: 'text', // 类型
+        left: left + width - 10, // 位置
+        top: top + height + 5,
+        style: {
+          text: '25',
+          font: '16px Microsoft YaHei',
+          fill: '#333' // 颜色
+        }
+      },
+      {
+        type: 'text', // 类型
+        left: left + width * 2 - 10, // 位置
+        top: top + height + 5,
+        style: {
+          text: '50',
+          font: '16px Microsoft YaHei',
+          fill: '#333' // 颜色
+        }
+      },
+      {
+        type: 'text', // 类型
+        left: left + width * 2 + 10, // 位置
+        top: top,
+        style: {
+          text: 'Km',
+          font: '16px Microsoft YaHei',
+          fill: '#333' // 颜色
+        }
+      },
+    ],
     // 配置属性
     series: [
+        // 比例尺图标
+      {
+        type: 'custom',
+        coordinateSystem: 'none',
+        renderItem: function(params, api) {
+          return {
+            type: 'myCustomShape',
+            shape: {
+              x: api.value(0),
+              y: api.value(1),
+              width: api.value(2),
+              height: api.value(3)
+            },
+            style: {
+              fill: '#000000',
+              strokeWidth: 2,
+              stroke: 'red'
+            }
+          };
+        },
+        data: [
+          [left, top, width, height]
+        ]
+      },
+      {
+        type: 'custom',
+        coordinateSystem: 'none',
+        renderItem: function(params, api) {
+          return {
+            type: 'myCustomShape',
+            shape: {
+              x: api.value(0),
+              y: api.value(1),
+              width: api.value(2),
+              height: api.value(3)
+            },
+            style: {
+              fill: '#f2f2f2',
+              stroke: 'red'
+            }
+          };
+        },
+        data: [
+          [left + width, top, width, height]
+        ]
+      },
       {
         name: '数据',
         type: 'map',
@@ -202,6 +315,14 @@ onMounted(() => {
   window.vm = this;
   
   init();
+
+  // 动态调整图例大小（例如根据窗口大小）
+  window.addEventListener('resize', function() {
+    const clientWidth = document.documentElement.clientWidth;
+    scale.value = clientWidth/2543;
+    
+    console.log('clientWidth', clientWidth, scale.value);
+  });
   
 });
 
@@ -210,7 +331,7 @@ onMounted(() => {
 <template>
   <main>
     <button @click="start">Start</button>
-    <div style="width:800px;height:600px" id="chartsDOM"></div>
-    <div style="width:800px;height:600px" id="chartsDOM2"></div>
+    <div :style="{'width':'800px','height':'600px','transform': 'scale(' + scale + ')', 'transform-origin': '0 0'}" id="chartsDOM"></div>
+    <div :style="{'width':'800px','height':'600px','transform': 'scale(' + scale + ')', 'transform-origin': '0 0'}" id="chartsDOM2"></div>
   </main>
 </template>
