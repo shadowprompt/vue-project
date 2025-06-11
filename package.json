@@ -4,8 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev:water": "cross-env PROJECT_NAME=water vite",
+    "dev:carbon": "cross-env PROJECT_NAME=carbon vite",
+    "build:water": "cross-env PROJECT_NAME=water vite build",
+    "build:carbon": "cross-env PROJECT_NAME=carbon vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -14,9 +16,12 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@babel/types": "^7.27.6",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vitejs/plugin-vue-jsx": "^4.1.2",
+    "cross-env": "^7.0.3",
     "vite": "^6.2.4",
+    "vite-plugin-html": "^3.2.2",
     "vite-plugin-vue-devtools": "^7.7.2"
   }
 }
