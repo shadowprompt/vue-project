@@ -3,12 +3,13 @@ import { onMounted, ref } from 'vue';
 import TheWelcome from '../components/TheWelcome.vue';
 import * as echarts from 'echarts';
 import china from '../assets/china.json';
+import waterJson from '../assets/waterJson.json';
 
 let count = 0;
 
 const dataList = [
-  // {name: '北京市',value: Math.round(Math.random()*1000000)},
-  // {name: '天津市',value: Math.round(Math.random()*2000000)},
+  {name: '北京市',value: Math.round(Math.random()*1000000)},
+  {name: '天津市',value: Math.round(Math.random()*2000000)},
   {name: '上海市',value: Math.round(Math.random()*1000000)},
   {name: '重庆市',value: Math.round(Math.random()*3000000)},
   {name: '河北省',value: Math.round(Math.random()*4000000)},
@@ -41,7 +42,10 @@ const dataList = [
   {name: '台湾省',value: Math.round(Math.random()*1000)},
   {name: '香港',value: Math.round(Math.random()*1000)},
   {name: '澳门',value: Math.round(Math.random()*1000)}
-].slice(0, 7);
+].map((item, index) => ({
+  ...item,
+  name: index + '',
+}));
 const total =  dataList.length;
 
 let instance = ref(null);
@@ -54,8 +58,8 @@ function init() {
   // 比例尺
   const width = 40;
   const height = 10;
-  const left = 350;
-  const top = 70;
+  const left = 0;
+  const top = 400;
   
   var MyShape = echarts.graphic.extendShape({
     shape: {
@@ -73,7 +77,22 @@ function init() {
     }
   });
   echarts.graphic.registerShape('myCustomShape', MyShape);
-  echarts.registerMap('china', china);
+  
+  const geoJson = {
+    "type": "FeatureCollection",
+    "features": waterJson.geometries.slice(0, 69).map((item, index) => ({
+      "type": "Feature",
+      "properties":
+          {
+            "name": index + '',
+          },
+      geometry: item
+    })),
+  };
+  console.log('geoJson ~ ', geoJson, dataList);
+  echarts.registerMap('water', {
+    geoJSON: geoJson
+  });
   
   instance.value = echarts.init(document.getElementById('chartsDOM'))
   instance2.value = echarts.init(document.getElementById('chartsDOM2'))
@@ -160,7 +179,23 @@ function init() {
     ],
     // 配置属性
     series: [
-        // 比例尺图标
+      {
+        name: '数据',
+        type: 'map',
+        mapType: 'water',
+        roam: true,
+        zoom: 1.2,
+        label: {
+          normal: {
+            show: true // 省份名称
+          },
+          emphasis: {
+            show: false
+          }
+        },
+        data: [],
+      },
+      // 比例尺图标
       {
         type: 'custom',
         coordinateSystem: 'none',
@@ -206,22 +241,6 @@ function init() {
           [left + width, top, width, height]
         ]
       },
-      {
-        name: '数据',
-        type: 'map',
-        mapType: 'china',
-        roam: true,
-        zoom: 1.2,
-        label: {
-          normal: {
-            show: true // 省份名称
-          },
-          emphasis: {
-            show: false
-          }
-        },
-        data: [],
-      }
     ]
   }
   instance.value.setOption(options);
