@@ -4,48 +4,36 @@ import TheWelcome from '../components/TheWelcome.vue';
 import * as echarts from 'echarts';
 import china from '../assets/china.json';
 import waterJson from '../assets/waterJson.json';
+import waterData from '../assets/waterData.json';
 
-let count = 0;
+const INITIAL = -1
+let count = INITIAL;
 
-const dataList = [
-  {name: '北京市',value: Math.round(Math.random()*1000000)},
-  {name: '天津市',value: Math.round(Math.random()*2000000)},
-  {name: '上海市',value: Math.round(Math.random()*1000000)},
-  {name: '重庆市',value: Math.round(Math.random()*3000000)},
-  {name: '河北省',value: Math.round(Math.random()*4000000)},
-  {name: '河南省',value: Math.round(Math.random()*6000000)},
-  {name: '云南省',value: Math.round(Math.random()*7000000)},
-  {name: '辽宁省',value: Math.round(Math.random()*9000000)},
-  {name: '黑龙江省',value: Math.round(Math.random()*1000000)},
-  {name: '湖南省',value: Math.round(Math.random()*1000)},
-  {name: '安徽省',value: Math.round(Math.random()*1000)},
-  {name: '山东省',value: Math.round(Math.random()*1000)},
-  {name: '新疆',value: Math.round(Math.random()*1000)},
-  {name: '江苏省',value: Math.round(Math.random()*1000)},
-  {name: '浙江省',value: Math.round(Math.random()*1000)},
-  {name: '江西省',value: Math.round(Math.random()*1000)},
-  {name: '湖北省',value: Math.round(Math.random()*1000)},
-  {name: '广西',value: Math.round(Math.random()*1000)},
-  {name: '甘肃省',value: Math.round(Math.random()*1000)},
-  {name: '山西省',value: Math.round(Math.random()*1000)},
-  {name: '内蒙古',value: Math.round(Math.random()*1000)},
-  {name: '陕西省',value: Math.round(Math.random()*1000)},
-  {name: '吉林省',value: Math.round(Math.random()*1000)},
-  {name: '福建省',value: Math.round(Math.random()*1000)},
-  {name: '贵州省',value: Math.round(Math.random()*1000)},
-  {name: '广东省',value: Math.round(Math.random()*1000)},
-  {name: '青海省',value: Math.round(Math.random()*1000)},
-  {name: '西藏',value: Math.round(Math.random()*1000)},
-  {name: '四川省',value: Math.round(Math.random()*1000)},
-  {name: '宁夏',value: Math.round(Math.random()*1000)},
-  {name: '海南省',value: Math.round(Math.random()*1000)},
-  {name: '台湾省',value: Math.round(Math.random()*1000)},
-  {name: '香港',value: Math.round(Math.random()*1000)},
-  {name: '澳门',value: Math.round(Math.random()*1000)}
-].map((item, index) => ({
-  ...item,
-  name: index + '',
-}));
+function getDataList(idx) {
+  
+  const dataList = Array(76).fill(1).map((item, index) => {
+    const data = waterData[index];
+    const name =data[0];
+    
+    const value =data[2 + 10 * idx];
+    // console.log('value of ~ ', idx, index, name, value);
+    return {
+      name: `${index}_${name}`,
+      value,
+      // value: waterData[index] ? waterData[index].value : Math.round(Math.random() * 1000000)
+    };
+  });
+  const maxValue = Math.max(...dataList.map(it => it.value));
+  const minValue = Math.min(...dataList.map(it => it.value));
+  console.log('getDataList of ~ ', idx, dataList, maxValue, minValue);
+  return {
+    maxValue,
+    minValue,
+    dataList,
+  };
+}
+
+const {dataList} = getDataList(0)
 const total =  dataList.length;
 
 let instance = ref(null);
@@ -84,7 +72,7 @@ function init() {
       "type": "Feature",
       "properties":
           {
-            "name": index + '',
+            "name": `${index}_${waterData[index][0]}`,
           },
       geometry: item
     })),
@@ -120,19 +108,47 @@ function init() {
       }
     },
     // 左侧小导航图标
+    // visualMap: {
+    //   type: 'piecewise',
+    //   pieces: [
+    //     {gt: 1024 * 1024 * 1024, label: '>1GB'}, // 不指定 max，表示 max 为无限大（Infinity）。
+    //     {gt: 1024 * 1024, lte: 1024 * 1024 * 1024, label: '(1MB,1GB]'},
+    //     {gt: 500 * 1024, lte: 1024 * 1024, label: '(500KB,1MB]'},
+    //     {gt: 1024, lte: 500 * 1024, label: '(1KB,500KB]'},
+    //     {gt: 0, lte: 1024, label: '(0,1KB]'} // 不指定 min，表示 min 为无限大（-Infinity）。
+    //   ],
+    //   show: true,
+    //   x: 'left',
+    //   y: 'center',
+    //   color: ['#5a7097', '#7be7db', '#b4f0d2', '#e0fafb']
+    // },
     visualMap: {
-      type: 'piecewise',
-      pieces: [
-        {gt: 1024 * 1024 * 1024, label: '>1GB'}, // 不指定 max，表示 max 为无限大（Infinity）。
-        {gt: 1024 * 1024, lte: 1024 * 1024 * 1024, label: '(1MB,1GB]'},
-        {gt: 500 * 1024, lte: 1024 * 1024, label: '(500KB,1MB]'},
-        {gt: 1024, lte: 500 * 1024, label: '(1KB,500KB]'},
-        {gt: 0, lte: 1024, label: '(0,1KB]'} // 不指定 min，表示 min 为无限大（-Infinity）。
-      ],
-      show: true,
-      x: 'left',
-      y: 'center',
-      color: ['#5a7097', '#7be7db', '#b4f0d2', '#e0fafb']
+      min: -2000000,
+      max: 8000000,
+      left: 'right',
+      top: 'center',
+      calculable: true,
+      realtime: false,
+      splitNumber: 8,
+      inRange: {
+        color: [
+          '#F2CCD4',
+          '#FFFDFE',
+          '#FFFFFF',
+          '#D7DFEF',
+          '#B2C3E0',
+          '#8FA7D2',
+          '#637CA9'
+        ]
+      }
+    },
+    xAxis: {
+      type: 'category',
+      data: [0, 110]
+    },
+    yAxis: {
+      type: 'category',
+      data: [0, 150]
     },
     graphic: [
     // 比例尺文字
@@ -194,6 +210,23 @@ function init() {
           }
         },
         data: [],
+      },
+      {
+        name: '热力图',
+        type: "heatmap",
+        // coordinateSystem: "geo",
+        geoIndex: 0,
+        emphasis: {
+          itemStyle: {
+            borderColor: '#333',
+            borderWidth: 1
+          }
+        },
+        data: [
+          // [0, 0, 0.44],
+          // [0, 1, 0.55],
+          // [0, 2, 0.8],
+        ],
       },
       // 比例尺图标
       {
@@ -292,9 +325,14 @@ function run() {
   let setId = setInterval(() => {
     count = count + 1;
     console.log('set ~ ', `${count}/${total}`, setId);
+    const {minValue, maxValue, dataList} = getDataList(count)
     instance.value.setOption({
+      visualMap: {
+        max: maxValue * 1.2,
+        min: minValue * 1.4,
+      },
       series: [{
-        data: dataList.slice(0, count)
+        data: dataList
       }]
     });
 
@@ -312,7 +350,7 @@ function run() {
 }
 
 function start() {
-  count = 0;
+  count = INITIAL;
   console.log('reset ~ ', `${count}/${total}`);
   instance.value.setOption({
     series: [{
